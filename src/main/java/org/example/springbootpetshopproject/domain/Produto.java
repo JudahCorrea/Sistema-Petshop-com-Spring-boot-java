@@ -5,6 +5,9 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.example.springbootpetshopproject.dto.ProdutoAtualizarDTO;
+import org.example.springbootpetshopproject.dto.ProdutoCadastroDTO;
+import org.example.springbootpetshopproject.dto.ProdutoRequestDTO;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.HashSet;
@@ -30,4 +33,29 @@ public class Produto extends ModelGenerico {
 
     @Length(min = 2, max = 100, message = "A descrição do produto precisa conter mais do que {min} caracteres e menos do que {max} caracteres.")
     String descricao ;
+
+    public Produto(ProdutoCadastroDTO produto) {
+        this.nome = produto.nome();
+        this.descricao = produto.descricao();
+        this.quantidade = produto.quantidade();
+        this.preco = produto.preco();
+    }
+
+    public void atualizar(ProdutoAtualizarDTO produto) {
+        if(produto.nome() != null){
+            this.nome = produto.nome();
+        }
+        if(produto.descricao() != null){
+            this.descricao = produto.descricao();
+        }
+        if(produto.estoque() != this.estoque){
+            this.estoque  = produto.estoque();
+        }
+        if(produto.quantidade() != this.quantidade){
+            this.quantidade  = produto.quantidade();
+        }
+        if(produto.preco() != this.preco){
+            this.preco = produto.preco();
+        }
+    }
 }

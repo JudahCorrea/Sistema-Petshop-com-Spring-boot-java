@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.springbootpetshopproject.dto.EnderecoRequestDTO;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -23,4 +24,9 @@ public class Endereco extends ModelGenerico {
 
     @NotNull(message = "O número não pode ser nulo.")
     Integer numero;
+
+    public Endereco (EnderecoRequestDTO dados){
+        this.rua = dados.getRua();
+        this.numero = dados.getNumero();
+    }
 }

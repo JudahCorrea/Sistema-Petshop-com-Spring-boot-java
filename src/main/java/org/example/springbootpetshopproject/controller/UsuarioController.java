@@ -1,14 +1,12 @@
 package org.example.springbootpetshopproject.controller;
 
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.example.springbootpetshopproject.domain.Endereco;
 import org.example.springbootpetshopproject.domain.UserRole;
 import org.example.springbootpetshopproject.domain.Usuario;
-import org.example.springbootpetshopproject.dto.EnderecoRequestDTO;
-import org.example.springbootpetshopproject.dto.UsuarioCadastroDTO;
-import org.example.springbootpetshopproject.dto.UsuarioRequestDTO;
-import org.example.springbootpetshopproject.dto.UsuarioResponseDTO;
+import org.example.springbootpetshopproject.dto.*;
 import org.example.springbootpetshopproject.repository.IUsuarioRepository;
 import org.example.springbootpetshopproject.service.UsuarioService;
 import org.modelmapper.ModelMapper;
@@ -94,10 +92,9 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public Page<UsuarioResponseDTO> listarTodos(Pageable pageable) {
-        Page<Usuario> usuariosPage = service.listarTodos(pageable);
-
-        return usuariosPage.map(this::converterParaDTO);
+    public ResponseEntity<Page<UsuarioListaAllDTO>> listar (Pageable paginacao){
+        var page =  repository.findAllByDeletadoEmNull(paginacao).map(UsuarioListaAllDTO::new);
+        return ResponseEntity.ok((Page<UsuarioListaAllDTO>) page);
     }
 
     @GetMapping("{id}")
@@ -111,17 +108,10 @@ public class UsuarioController {
 
     // fazer logica no generico
     @PutMapping("{id}")
+    @Transactional
     public ResponseEntity<UsuarioResponseDTO> alterar(@RequestBody UsuarioRequestDTO usuarioDTO, @PathVariable("id") Long id) {
-
-        /*
-       try {
-            Usuario usuarioEntidade = service.listarPorId(id);
-            System.out.println(usuarioEntidade);
-        } catch (Exception e) {
-           return this.criar(usuarioDTO);
-        }
-            */
-        Usuario usuarioAtualizado = service.alterar(mapper.map(usuarioDTO, Usuario.class), id);
+        Usuario usuarioAtualizado = repository.getReferenceById(id);
+        usuarioAtualizado.atualizarDados(usuarioDTO);
         return ResponseEntity.ok(converterParaDTO(usuarioAtualizado));
     }
 
