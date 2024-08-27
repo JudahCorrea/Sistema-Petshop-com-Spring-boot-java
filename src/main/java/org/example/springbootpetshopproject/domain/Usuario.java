@@ -3,12 +3,14 @@ package org.example.springbootpetshopproject.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.example.springbootpetshopproject.dto.UsuarioRequestDTO;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@SQLDelete(sql = "UPDATE Cliente SET deletado_Em = CURRENT_TIMESTAMP WHERE id=?")
+@SQLDelete(sql = "UPDATE Usuario SET deletado_Em = CURRENT_TIMESTAMP WHERE id=?")
 @SQLRestriction("deletado_Em is null")
 public class Usuario extends ModelGenerico implements UserDetails {
 
@@ -50,6 +52,24 @@ public class Usuario extends ModelGenerico implements UserDetails {
     UserRole role;
 
 
+
+    public void atualizarDados (UsuarioRequestDTO dados){
+        if(dados.getNome() != null){
+            this.nome = dados.getNome();
+        }
+        if(dados.getEmail() != null){
+            this.email = dados.getEmail();
+        }
+        if(dados.getSenha() != null){
+            this.senha = new BCryptPasswordEncoder().encode(dados.getSenha());
+        }
+        if(dados.getContato() != null){
+            this.contato = dados.getContato();
+        }
+        if(dados.getEndereco() != null){
+            this.endereco = new Endereco(dados.getEndereco());
+        }
+    }
 
     public Usuario(String nome, String email, String encryptedPassword, String contato, Endereco endereco) {
         this.nome = nome;
