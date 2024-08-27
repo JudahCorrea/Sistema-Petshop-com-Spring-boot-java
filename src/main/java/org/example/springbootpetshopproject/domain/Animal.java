@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.springbootpetshopproject.dto.AnimalAtualizarDTO;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.validator.constraints.Length;
@@ -49,5 +50,24 @@ public class Animal extends ModelGenerico {
 
     public Usuario getUsuario() {
         return tutor;
+    }
+
+
+    public void atualizar(AnimalAtualizarDTO animalDTO) {
+        if(animalDTO.nome() != null) {
+            this.nome = animalDTO.nome();
+            System.out.println("ATUALIZADO");
+        }
+        if(animalDTO.raca() != null) {
+            this.raca = animalDTO.raca();
+        }
+        if(animalDTO.especie() != null) {
+            this.especie = animalDTO.especie();
+        }
+        if(animalDTO.idade() != null) {
+            this.idade = animalDTO.idade();
+        }
+
+
     }
 }
