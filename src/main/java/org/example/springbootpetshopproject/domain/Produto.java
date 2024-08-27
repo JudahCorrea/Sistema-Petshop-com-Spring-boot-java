@@ -44,6 +44,7 @@ public class Produto extends ModelGenerico {
     public void atualizar(ProdutoAtualizarDTO produto) {
         if(produto.nome() != null){
             this.nome = produto.nome();
+            System.out.println("ATUALIZOUUUUU");
         }
         if(produto.descricao() != null){
             this.descricao = produto.descricao();

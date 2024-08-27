@@ -2,26 +2,29 @@ package org.example.springbootpetshopproject.controller;
 
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.springbootpetshopproject.domain.Produto;
-import org.example.springbootpetshopproject.dto.ProdutoAtualizarDTO;
-import org.example.springbootpetshopproject.dto.ProdutoCadastroDTO;
-import org.example.springbootpetshopproject.dto.ProdutoRequestDTO;
-import org.example.springbootpetshopproject.dto.ProdutoResponseDTO;
+import org.example.springbootpetshopproject.dto.*;
 import org.example.springbootpetshopproject.repository.IProdutoRepository;
 import org.example.springbootpetshopproject.service.ProdutoService;
+import org.example.springbootpetshopproject.service.UsuarioService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/produtos/")
+@CrossOrigin(origins = "http://localhost:42000")
 public class ProdutoController {
-    private final ProdutoService service;
+
+    @Autowired
+    ProdutoService service;
+
     private final ModelMapper mapper;
 
     @Autowired
@@ -44,11 +47,25 @@ public class ProdutoController {
     }"*/
     @PutMapping("{id}")
     @Transactional
-    public ResponseEntity atualizar (@RequestBody ProdutoAtualizarDTO produto, Long id) {
+    public ResponseEntity atualizar (@RequestBody ProdutoAtualizarDTO produto,@PathVariable Long id) {
         var produtoAtualizar = repository.getReferenceById(id);
         produtoAtualizar.atualizar(produto);
         return ResponseEntity.ok(new ProdutoAtualizarDTO(produto));
     }
+
+    @GetMapping
+    public ResponseEntity<Page<ProdutoListar>> ListAll(Pageable paginacao){
+        var page = repository.findAllByDeletadoEmNull(paginacao);
+        return ResponseEntity.ok(page);
+
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity deletar(@PathVariable("id") Long id){
+        service.deletarPorId(id);
+        return ResponseEntity.noContent().build();
+    };
 
 
     private ProdutoResponseDTO converterParaDTO(Produto produtoEntidade) {

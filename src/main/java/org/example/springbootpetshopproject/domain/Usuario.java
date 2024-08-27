@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,12 +23,16 @@ import java.util.List;
 @Entity
 @SQLDelete(sql = "UPDATE Usuario SET deletado_Em = CURRENT_TIMESTAMP WHERE id=?")
 @SQLRestriction("deletado_Em is null")
+
 public class Usuario extends ModelGenerico implements UserDetails {
 
     @NotNull(message = "O nome não pode ser nulo.")
     @NotEmpty(message = "O nome precisa ser preenchido.")
     @Length(min = 2, max = 60, message = "O nome precisa conter mais do que {min} caracteres e menos do que {max} caracteres.")
     String nome;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Carrinho> carrinhos = new ArrayList<>();
 
     @Email
     @NotEmpty(message = "O email precisa ser preenchido.")

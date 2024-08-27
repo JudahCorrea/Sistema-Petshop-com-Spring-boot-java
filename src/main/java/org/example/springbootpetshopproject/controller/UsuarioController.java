@@ -23,6 +23,7 @@ import java.net.URI;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/usuarios/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController {
     private final UsuarioService service;
     //private final EnderecoService serviceEndereco;
@@ -118,8 +119,9 @@ public class UsuarioController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletar(@PathVariable("id") Long id) {
+    public ResponseEntity deletar(@PathVariable("id") Long id) {
         service.deletarPorId(id);
+        return ResponseEntity.noContent().build();
     }
 
 

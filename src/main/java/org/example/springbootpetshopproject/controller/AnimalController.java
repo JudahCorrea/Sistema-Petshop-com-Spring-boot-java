@@ -1,13 +1,18 @@
 package org.example.springbootpetshopproject.controller;
 
 
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.springbootpetshopproject.domain.Animal;
 import org.example.springbootpetshopproject.domain.Usuario;
+import org.example.springbootpetshopproject.dto.AnimalAtualizarDTO;
 import org.example.springbootpetshopproject.dto.AnimalRequestDTO;
 import org.example.springbootpetshopproject.dto.AnimalResponseDTO;
+import org.example.springbootpetshopproject.repository.IAnimalRepository;
 import org.example.springbootpetshopproject.service.AnimalService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,9 +25,13 @@ import java.net.URI;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/animais/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AnimalController {
     private final AnimalService service;
     private final ModelMapper mapper;
+
+    @Autowired
+    IAnimalRepository repository;
 
 
     @PostMapping
@@ -56,16 +65,11 @@ public class AnimalController {
 
     // fazer logica no generico
     @PutMapping("{id}")
-    public ResponseEntity<AnimalResponseDTO> alterar(@RequestBody AnimalRequestDTO animalDTO, @PathVariable("id") Long id) {
-
-        try {
-            Animal animalEntidade = service.listarPorId(id);
-        } catch(Exception e) {
-            return this.criar(animalDTO);
-        }
-
-        Animal animalAtualizado = service.alterar(mapper.map(animalDTO, Animal.class), id);
-        return ResponseEntity.ok(converterParaDTO(animalAtualizado));
+    @Transactional
+    public ResponseEntity<AnimalAtualizarDTO> alterar(@RequestBody AnimalAtualizarDTO animalDTO, @PathVariable("id") Long id) {
+        var animal = repository.getReferenceById(id);
+    animal.atualizar(animalDTO);
+    return ResponseEntity.ok(new AnimalAtualizarDTO(animal));
     }
 
     @DeleteMapping("{id}")
